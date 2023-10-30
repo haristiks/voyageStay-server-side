@@ -5,7 +5,7 @@ const cors = require("cors");
 const PORT = 8000;
 const userRouter = require("./Routes/userRoutes");
 mongoose.connect("mongodb://127.0.0.1:27017/Voyage-Stay");
-const ErrorHandler = require("./Middlewares/ErrorHandle");
+const ErrorHandler = require("./Middlewares/ErrorHandler");
 
 const app = express();
 app.use(cors());

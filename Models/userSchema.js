@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const userSchema = mongoose.Schema({
-  _id: String,
   name: String,
   email: { type: String, unique: true },
   emailVerified: Date,
@@ -10,9 +9,9 @@ const userSchema = mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
   favoriteIds: [{ type: String }],
 
-  accounts: [{ type: Schema.Types.ObjectId, ref: "Account" }],
-  listings: [{ type: Schema.Types.ObjectId, ref: "Listing" }],
-  reservations: [{ type: Schema.Types.ObjectId, ref: "Reservation" }],
+  accounts: [{ type: mongoose.Schema.ObjectId, ref: "Account" }],
+  listings: [{ type: mongoose.Schema.ObjectId, ref: "Listing" }],
+  reservations: [{ type: mongoose.Schema.ObjectId, ref: "Reservation" }],
 });
 
 module.exports = mongoose.model("User", userSchema);
