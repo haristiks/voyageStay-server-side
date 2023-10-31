@@ -26,18 +26,20 @@ module.exports = {
   userLongin: async (req, res) => {
     const { email, password } = req.body;
     console.log(req.body);
-    
-    const User = await user.findOne({ email:email });
+
+    const User = await user.findOne({ email: email });
     if (!User) {
       return res
         .status(404)
         .json({ status: "error", message: "User not found" });
     }
-    if (!password || !User.password) {
-      return res.status(400).json({ status: "error", message: "Invalid input" });
+    if (!password || !User.hashedPassword) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Invalid input" });
     }
-    
-    const checkPass = await bcrypt.compare(password, User.password);
+
+    const checkPass = await bcrypt.compare(password, User.hashedPassword);
     if (!checkPass) {
       res.status(400).json({ status: "error", message: "password incorrect" });
     }
@@ -48,8 +50,12 @@ module.exports = {
         expiresIn: 86400,
       }
     );
-    res
-      .status(200)
-      .json({ status: "success", message: "Login successful", data: token, user:User });
+    
+    res.status(200).json({
+      status: "success",
+      message: "Login successful",
+      accessToken:token,
+      ...User,
+    });
   },
 };
