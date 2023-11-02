@@ -1,6 +1,7 @@
 const user = require("../Models/userSchema");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const PropertyListing = require("../Models/listingSchema");
 
 module.exports = {
   //
@@ -50,12 +51,49 @@ module.exports = {
         expiresIn: 86400,
       }
     );
-    
+
     res.status(200).json({
       status: "success",
       message: "Login successful",
-      accessToken:token,
+      accessToken: token,
       ...User,
+    });
+  },
+  //
+  //
+  //
+  createListings: async (req, res) => {
+    const id = req.params.id;
+    const {
+      title,
+      description,
+      imageSrc,
+      category,
+      roomCount,
+      bathroomCount,
+      guestCount,
+      location,
+      price,
+    } = req.body;
+
+    const property = await PropertyListing.create({
+      title,
+      description,
+      imageSrc,
+      category,
+      roomCount,
+      bathroomCount,
+      guestCount,
+      locationValue: location,
+      userId: id,
+      price,
+    });
+
+    await user.updateOne({ _id: id }, { $push: { listings: property._id } });
+
+    res.status(201).json({
+      status: "success",
+      message: "Listing created Successfully.",
     });
   },
 };
