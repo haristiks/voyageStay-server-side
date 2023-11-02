@@ -84,9 +84,9 @@ module.exports = {
       roomCount,
       bathroomCount,
       guestCount,
-      locationValue: location,
+      locationValue: location.value,
       userId: id,
-      price,
+      price: parseInt(price, 10),
     });
 
     await user.updateOne({ _id: id }, { $push: { listings: property._id } });
@@ -94,6 +94,7 @@ module.exports = {
     res.status(201).json({
       status: "success",
       message: "Listing created Successfully.",
+      listing: property,
     });
   },
 };
