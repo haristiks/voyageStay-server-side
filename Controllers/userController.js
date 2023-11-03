@@ -45,10 +45,10 @@ module.exports = {
       res.status(400).json({ status: "error", message: "password incorrect" });
     }
     const token = jwt.sign(
-      { username: User.username },
+      { email: User.email },
       process.env.USER_ACCESS_TOKEN_SECRET,
       {
-        expiresIn: 86400,
+        expiresIn: 100000,
       }
     );
 

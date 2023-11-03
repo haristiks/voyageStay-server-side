@@ -6,11 +6,15 @@ const PORT = 8000;
 const userRouter = require("./Routes/userRoutes");
 mongoose.connect("mongodb://127.0.0.1:27017/Voyage-Stay");
 const ErrorHandler = require("./Middlewares/ErrorHandler");
+const propertyRouter = require("./Routes/propertyRoutes")
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api/users", userRouter);
+app.use("/api/properties",propertyRouter)
+
 
 
 app.use(ErrorHandler);
