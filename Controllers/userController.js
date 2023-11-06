@@ -97,4 +97,25 @@ module.exports = {
       listing: property,
     });
   },
+  //
+  //
+  //
+
+  addToFavorites: async (req, res) => {
+    const id = req.params.id;
+    const { favoriteIds } = req.body;
+
+    const User = await user.findOne({ _id: id });
+    if (!User) {
+      res.status(404).json({ status: "error", message: "User not found" });
+    }
+
+    await user.updateOne({ _id: id }, { $set: { favoriteIds: favoriteIds } });
+
+    res.status(201).json({
+      status: "success",
+      message: "added to Favorites.",
+      ...User,
+    });
+  },
 };
