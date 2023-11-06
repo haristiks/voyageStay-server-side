@@ -9,7 +9,6 @@ module.exports = {
   //
   userCreation: async (req, res) => {
     const { name, email, password } = req.body;
-    console.log(req.body);
     const hashedPassword = await bcrypt.hash(password, 12);
     await user.create({
       name,
@@ -26,7 +25,6 @@ module.exports = {
   //
   userLongin: async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.body);
 
     const User = await user.findOne({ email: email });
     if (!User) {
@@ -52,11 +50,15 @@ module.exports = {
       }
     );
 
+
+    const resp={...User._doc}
+   
+
     res.status(200).json({
       status: "success",
       message: "Login successful",
       accessToken: token,
-      ...User,
+      ...resp,
     });
   },
   //
@@ -112,10 +114,10 @@ module.exports = {
 
     await user.updateOne({ _id: id }, { $set: { favoriteIds: favoriteIds } });
 
+
     res.status(201).json({
       status: "success",
       message: "added to Favorites.",
-      ...User,
     });
   },
 };
