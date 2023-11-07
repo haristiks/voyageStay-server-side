@@ -50,9 +50,7 @@ module.exports = {
       }
     );
 
-
-    const resp={...User._doc}
-   
+    const resp = { ...User._doc };
 
     res.status(200).json({
       status: "success",
@@ -105,19 +103,39 @@ module.exports = {
 
   addToFavorites: async (req, res) => {
     const id = req.params.id;
-    const { favoriteIds } = req.body;
+    const { listingId } = req.body;
 
     const User = await user.findOne({ _id: id });
     if (!User) {
       res.status(404).json({ status: "error", message: "User not found" });
     }
 
-    await user.updateOne({ _id: id }, { $set: { favoriteIds: favoriteIds } });
-
+    await user.updateOne(
+      { _id: id },
+      { $addToSet: { favoriteIds: listingId } }
+    );
 
     res.status(201).json({
       status: "success",
       message: "added to Favorites.",
+    });
+  },
+
+  removeFavorites: async (req, res) => {
+    const id = req.params.id;
+    const { listingId } = req.body;
+    console.log(listingId);
+
+    const User = await user.findOne({ _id: id });
+    if (!User) {
+      res.status(404).json({ status: "error", message: "User not found" });
+    }
+
+    await user.updateOne({ _id: id }, { $pull: { favoriteIds: listingId } });
+
+    res.status(201).json({
+      status: "success",
+      message: "Removed from Favorites.",
     });
   },
 };

@@ -11,6 +11,8 @@ module.exports = {
       });
     }
 
+    console.log(listings);
+
     res.status(200).json({
       status: "success",
       message: "Property Listing fetch Successfull",
