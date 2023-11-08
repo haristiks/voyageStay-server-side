@@ -9,5 +9,7 @@ router.post("/auth/login", TryCatch(controller.userLongin));
 router.post("/:id/listings", verifyToken, TryCatch(controller.createListings));
 router.post("/:id/favorites",verifyToken,TryCatch(controller.addToFavorites));
 router.patch("/:id/favorites",verifyToken,TryCatch(controller.removeFavorites));
+router.post("/:id/reservations",verifyToken, TryCatch(controller.reservation))
+
 
 module.exports = router;

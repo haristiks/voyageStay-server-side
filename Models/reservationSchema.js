@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const reservationSchema = mongoose.Schema({
-  _id: String,
   userId: { type: String, ref: "User" },
   listingId: { type: String, ref: "Listing" },
   startDate: Date,

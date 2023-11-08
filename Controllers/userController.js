@@ -2,6 +2,7 @@ const user = require("../Models/userSchema");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const PropertyListing = require("../Models/listingSchema");
+const Reservations = require("../Models/reservationSchema");
 
 module.exports = {
   //
@@ -120,11 +121,12 @@ module.exports = {
       message: "added to Favorites.",
     });
   },
-
+  //
+  //
+  //
   removeFavorites: async (req, res) => {
     const id = req.params.id;
     const { listingId } = req.body;
-    console.log(listingId);
 
     const User = await user.findOne({ _id: id });
     if (!User) {
@@ -138,4 +140,38 @@ module.exports = {
       message: "Removed from Favorites.",
     });
   },
+  //
+  //
+  //
+  reservation: async (req, res) => {
+    const id = req.params.id;
+    const { listingId, startDate, endDate, totalPrice } = req.body;
+
+    const User = await user.findOne({ _id: id });
+    if (!User) {
+      res.status(404).json({ status: "error", message: "User not found" });
+    }
+
+    const reservationId = await Reservations.create({
+      userId: id,
+      listingId,
+      startDate,
+      endDate,
+      totalPrice,
+    });
+
+    await user.updateOne(
+      { _id: id },
+      { $addToSet: { reservations: reservationId } }
+    );
+
+    res.status(201).json({
+      status: "success",
+      message: "Reservation successfull.",
+    });
+  },
+  //
+  //
+  //
+
 };
