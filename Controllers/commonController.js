@@ -1,5 +1,6 @@
 const PropertyListing = require("../Models/listingSchema");
 const Reservations = require("../Models/reservationSchema");
+const User = require("../Models/userSchema");
 
 module.exports = {
   getAllListings: async (req, res) => {
@@ -22,7 +23,7 @@ module.exports = {
   //
   //
   getReservations: async (req, res) => {
-    const ReservationList = await Reservations.find();
+    const ReservationList = await Reservations.find().populate("listingId");
 
     if (!ReservationList) {
       return res.status(404).json({
@@ -36,6 +37,26 @@ module.exports = {
       status: "success",
       message: "Reservations fetch Successfull",
       data: ReservationList,
+    });
+  },
+  //
+  //
+  //
+  getUsers: async (req, res) => {
+    const users = await User.find();
+
+    if (!users) {
+      return res.status(404).json({
+        status: "failure",
+        status_code: 404,
+        message: "No user data found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Reservations fetch Successfull",
+      data: users,
     });
   },
 };

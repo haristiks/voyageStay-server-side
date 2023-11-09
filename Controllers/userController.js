@@ -173,5 +173,15 @@ module.exports = {
   //
   //
   //
+  cancelReservation: async (req, res) => {
+    const reservId = req.params.reservId;
+    const userId= req.params.id;
+    await Reservations.findByIdAndDelete(reservId);
+    await user.updateOne({ _id: userId }, { $pull: { reservations: reservId } });
 
+    res.status(200).json({
+      status: "success",
+      message: "Successfully cancelled reservation.",
+    });
+  },
 };
