@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
   hashedPassword: String,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  favoriteIds: [{ type: String }],
+  favoriteIds: [{ type: mongoose.Schema.ObjectId, ref: "Listing" }],
 
   accounts: [{ type: mongoose.Schema.ObjectId, ref: "Account" }],
   listings: [{ type: mongoose.Schema.ObjectId, ref: "Listing" }],
