@@ -4,7 +4,10 @@ const controller = require("../Controllers/commonController");
 const TryCatch = require("../Middlewares/tryCatchMiddleware");
 
 router.get("/listings", TryCatch(controller.getAllListings));
-router.get('/reservations',TryCatch(controller.getReservations))
-router.get('/users',TryCatch(controller.getUsers))
+router.get("/listings/:listingId", TryCatch(controller.getListingById));
+router.get("/reservations", TryCatch(controller.getReservations));
+router.get("/reservations/:listingId", TryCatch(controller.ReservationByListingId));
+router.get("/users", TryCatch(controller.getUsers));
+router.get('/users/:id', TryCatch(controller.getUserById))
 
 module.exports = router;
