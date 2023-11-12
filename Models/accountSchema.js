@@ -12,6 +12,7 @@ const accountSchema = mongoose.Schema({
   scope: String,
   id_token: String,
   session_state: String,
+  
 });
 
 module.exports = mongoose.model("Account", accountSchema);
