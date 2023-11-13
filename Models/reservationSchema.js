@@ -7,6 +7,7 @@ const reservationSchema = mongoose.Schema({
   endDate: Date,
   totalPrice: Number,
   createdAt: { type: Date, default: Date.now },
+  cancelledByHost : {type: Boolean, default:false}
 });
 
 module.exports = mongoose.model("Reservation", reservationSchema);

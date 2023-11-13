@@ -175,10 +175,33 @@ module.exports = {
   //
   cancelReservation: async (req, res) => {
     const reservId = req.params.reservId;
-    const userId= req.params.id;
-    await Reservations.findByIdAndDelete(reservId);
-    await user.updateOne({ _id: userId }, { $pull: { reservations: reservId } });
+    const userId = req.params.id;
+    const reservation = await Reservations.findOne({ _id: reservId });
+    if (!reservation) {
+      res.status(404).json({
+        status: "error",
+        message: "no reservation found",
+      });
+    }
 
+    if (reservation.userId == userId) {
+      await Reservations.findByIdAndDelete({ _id: reservId });
+      await user.updateOne(
+        { _id: userId },
+        { $pull: { reservations: reservId } }
+      );
+
+      res.status(200).json({
+        status: "success",
+        message: "Successfully cancelled reservation.",
+      });
+    }
+
+    await Reservations.findByIdAndUpdate(
+      { _id: reservId },
+      { cancelledByHost: true }
+    );
+    await Reservations.findByIdAndDelete({ _id: reservId });
     res.status(200).json({
       status: "success",
       message: "Successfully cancelled reservation.",

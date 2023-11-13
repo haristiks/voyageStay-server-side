@@ -82,7 +82,7 @@ module.exports = {
   //
   //
   getUsers: async (req, res) => {
-    const users = await User.find();
+    const users = await User.find().populate('favoriteIds');
 
     if (!users) {
       return res.status(404).json({
