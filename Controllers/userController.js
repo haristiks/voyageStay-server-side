@@ -101,7 +101,36 @@ module.exports = {
   //
   //
   //
+  deleteListing: async (req, res) => {
+    const listId = req.params.listingId;
+    const id = req.params.id;
 
+    const User = await user.findOne({ _id: id });
+    if (!User) {
+      res.status(404).json({
+        status: "error",
+        message: "user not found",
+      });
+    }
+
+    if (User.listings.includes(listId)) {
+      await PropertyListing.findByIdAndDelete({ _id: listId });
+      await user.updateOne({ _id: id }, { $pull: { listings: listId } });
+
+      res.status(200).json({
+        status: "success",
+        message: "property deleted successfully",
+      });
+    } else {
+      res.status(404).json({
+        status: "error",
+        message: "Property not found",
+      });
+    }
+  },
+  //
+  //
+  //
   addToFavorites: async (req, res) => {
     const id = req.params.id;
     const { listingId } = req.body;
@@ -205,6 +234,27 @@ module.exports = {
     res.status(200).json({
       status: "success",
       message: "Successfully cancelled reservation.",
+    });
+  },
+  //
+  //
+  //
+  getFavorites: async (req, res) => {
+    const id = req.params.id;
+    const favorites = await user
+      .findOne({ _id: id }, { favoriteIds: 1 })
+      .populate("favoriteIds");
+    if (!favorites) {
+      res.status(404).json({
+        status: "error",
+        message: "No favorites found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: " successfully fetched favorites",
+      data: favorites,
     });
   },
 };

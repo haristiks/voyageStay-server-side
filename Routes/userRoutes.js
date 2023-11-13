@@ -11,6 +11,7 @@ router.post("/:id/favorites",verifyToken,TryCatch(controller.addToFavorites));
 router.patch("/:id/favorites",verifyToken,TryCatch(controller.removeFavorites));
 router.post("/:id/reservations",verifyToken, TryCatch(controller.reservation))
 router.delete("/:id/reservations/:reservId",verifyToken, TryCatch(controller.cancelReservation))
+router.delete("/:id/listings/:listingId",verifyToken, TryCatch(controller.deleteListing))
 
 
 module.exports = router;
