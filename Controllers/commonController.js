@@ -4,6 +4,8 @@ const User = require("../Models/userSchema");
 
 module.exports = {
   getAllListings: async (req, res) => {
+    const  category  = req.query.category;
+    console.log(category);
     const listings = await PropertyListing.find();
     if (!listings) {
       return res.status(404).json({
@@ -82,7 +84,7 @@ module.exports = {
   //
   //
   getUsers: async (req, res) => {
-    const users = await User.find().populate(['favoriteIds', 'listings']);
+    const users = await User.find().populate(["favoriteIds", "listings"]);
 
     if (!users) {
       return res.status(404).json({
@@ -102,8 +104,8 @@ module.exports = {
   //
   //
   getUserById: async (req, res) => {
-    const id= req.params.id;
-    const user = await User.findOne({_id:id})
+    const id = req.params.id;
+    const user = await User.findOne({ _id: id });
     if (!user) {
       return res.status(404).json({
         status: "failure",
