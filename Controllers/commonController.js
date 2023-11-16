@@ -4,8 +4,74 @@ const User = require("../Models/userSchema");
 
 module.exports = {
   getAllListings: async (req, res) => {
-    const  category  = req.query.category;
-    console.log(category);
+    const {
+      roomCount,
+      guestCount,
+      bathroomCount,
+      locationValue,
+      startDate,
+      endDate,
+      category,
+    } = req.query;
+
+    if (category && !roomCount) {
+      const listings = await PropertyListing.find({ category: category });
+      if (!listings) {
+        return res.status(404).json({
+          status: "failure",
+          status_code: 404,
+          message: "Data not found.",
+        });
+      }
+
+      return res.status(200).json({
+        status: "success",
+        message: "Property Listing fetch Successfull",
+        data: listings,
+      });
+    } else if (category && roomCount) {
+      const listings = await PropertyListing.find({
+        category,
+        roomCount,
+        guestCount,
+        bathroomCount,
+        locationValue,
+      });
+      if (!listings) {
+        return res.status(404).json({
+          status: "failure",
+          status_code: 404,
+          message: "Data not found.",
+        });
+      }
+
+      return res.status(200).json({
+        status: "success",
+        message: "Property Listing fetch Successfull",
+        data: listings,
+      });
+    } else if (!category && roomCount) {
+      const listings = await PropertyListing.find({
+        roomCount,
+        guestCount,
+        bathroomCount,
+        locationValue,
+      });
+      if (!listings) {
+        return res.status(404).json({
+          status: "failure",
+          status_code: 404,
+          message: "Data not found.",
+        });
+      }
+
+      return res.status(200).json({
+        status: "success",
+        message: "Property Listing fetch Successfull",
+        data: listings,
+      });
+    }
+
     const listings = await PropertyListing.find();
     if (!listings) {
       return res.status(404).json({
@@ -15,12 +81,13 @@ module.exports = {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       status: "success",
       message: "Property Listing fetch Successfull",
       data: listings,
     });
   },
+
   //
   //
   //
