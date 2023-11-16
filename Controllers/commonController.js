@@ -151,7 +151,7 @@ module.exports = {
   //
   //
   getUsers: async (req, res) => {
-    const users = await User.find().populate(["favoriteIds", "listings"]);
+    const users = await User.find().populate(["favoriteIds", "listings", "reservations"]);
 
     if (!users) {
       return res.status(404).json({
