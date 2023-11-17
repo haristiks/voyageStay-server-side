@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const PropertyListing = require("../Models/listingSchema");
 const Reservations = require("../Models/reservationSchema");
+const Favorite = require("../Models/favoritesSchema");
 
 module.exports = {
   //
@@ -139,11 +140,8 @@ module.exports = {
     if (!User) {
       res.status(404).json({ status: "error", message: "User not found" });
     }
-
-    await user.updateOne(
-      { _id: id },
-      { $addToSet: { favoriteIds: listingId } }
-    );
+    const favorite = await Favorite.create({ userId: id, listingId });
+    await user.updateOne({ _id: id }, { $addToSet: { favoriteIds: favorite } });
 
     res.status(201).json({
       status: "success",
@@ -160,9 +158,17 @@ module.exports = {
     const User = await user.findOne({ _id: id });
     if (!User) {
       res.status(404).json({ status: "error", message: "User not found" });
+      return; // Exit the function if the user is not found
     }
 
-    await user.updateOne({ _id: id }, { $pull: { favoriteIds: listingId } });
+    const favorite = await Favorite.findOne({ userId: id, listingId });
+    if (!favorite) {
+      res.status(404).json({ status: "error", message: "Favorite not found" });
+      return; // Exit the function if the favorite is not found
+    }
+
+    await Favorite.deleteOne({ userId: id, listingId: listingId });
+    await user.updateOne({ _id: id }, { $pull: { favoriteIds: favorite._id } });
 
     res.status(201).json({
       status: "success",
