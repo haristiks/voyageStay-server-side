@@ -247,9 +247,8 @@ module.exports = {
   //
   getFavorites: async (req, res) => {
     const id = req.params.id;
-    const favorites = await user
-      .findOne({ _id: id }, { favoriteIds: 1 })
-      .populate("favoriteIds");
+    const favorites = await Favorite
+      .find({ userId: id }).populate('listingId');
     if (!favorites) {
       res.status(404).json({
         status: "error",
