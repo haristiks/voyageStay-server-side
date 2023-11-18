@@ -166,9 +166,8 @@ module.exports = {
       res.status(404).json({ status: "error", message: "Favorite not found" });
       return; // Exit the function if the favorite is not found
     }
-
-    await Favorite.deleteOne({ userId: id, listingId: listingId });
     await user.updateOne({ _id: id }, { $pull: { favoriteIds: favorite._id } });
+    await Favorite.deleteOne({ userId: id, listingId: listingId });
 
     res.status(201).json({
       status: "success",
@@ -247,8 +246,7 @@ module.exports = {
   //
   getFavorites: async (req, res) => {
     const id = req.params.id;
-    const favorites = await Favorite
-      .find({ userId: id }).populate('listingId');
+    const favorites = await Favorite.find({ userId: id }).populate("listingId");
     if (!favorites) {
       res.status(404).json({
         status: "error",

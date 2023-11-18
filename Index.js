@@ -7,10 +7,12 @@ const userRouter = require("./Routes/userRoutes");
 mongoose.connect("mongodb://127.0.0.1:27017/Voyage-Stay");
 const ErrorHandler = require("./Middlewares/ErrorHandler");
 const commonRouter = require("./Routes/commonRoutes");
+const authRoute = require("./Routes/authRoute");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/api/auth", authRoute);
 app.use("/api/users", userRouter);
 app.use("/api/data", commonRouter);
 
