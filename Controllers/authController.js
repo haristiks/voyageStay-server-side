@@ -28,29 +28,46 @@ module.exports = {
         .json({ status: "error", message: "Invalid input" });
     }
 
+    if (User.adminSuspended) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Suspended Accound" });
+    }
+
+
     const checkPass = await bcrypt.compare(password, User.hashedPassword);
     if (!checkPass) {
       res.status(400).json({ status: "error", message: "password incorrect" });
     }
 
-    let accessToken;
-    if (User.role === "admin") {
-      accessToken = jwt.sign(
-        { email: User.email },
-        process.env.ADMIN_ACCESS_TOKEN_SECRET,
-        {
-          expiresIn: 1000,
-        }
-      );
-    } else if (User.role === "user") {
-      accessToken = jwt.sign(
-        { email: User.email },
-        process.env.USER_ACCESS_TOKEN_SECRET,
-        {
-          expiresIn: 1000,
-        }
-      );
-    }
+    // let accessToken;
+    // if (User.role === "admin") {
+    //   accessToken = jwt.sign(
+    //     { email: User.email },
+    //     process.env.ADMIN_ACCESS_TOKEN_SECRET,
+    //     {
+    //       expiresIn: 100000,
+    //     }
+    //   );
+    // } else if (User.role === "user") {
+    //   accessToken = jwt.sign(
+    //     { email: User.email },
+    //     process.env.USER_ACCESS_TOKEN_SECRET,
+    //     {
+    //       expiresIn: 1000,
+    //     }
+    //   );
+    // }
+
+    
+
+    const accessToken = jwt.sign(
+      { email: User.email },
+      process.env.USER_ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: 1000,
+      }
+    );
 
     res.status(200).json({
       status: "success",

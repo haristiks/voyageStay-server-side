@@ -84,7 +84,25 @@ module.exports = {
   },
   //
   //
-  mangeUser: async (req, res) => {},
+  mangeUser: async (req, res) => {
+    const id = req.params.id;
+    const { adminSuspended } = req.body;
+
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+      res.status(404).json({
+        status: "error",
+        message: "No Such User",
+      });
+    }
+
+    await User.findByIdAndUpdate(id, { $set: { adminSuspended } });
+
+    res.status(201).json({
+      status: "success",
+      message: " successfully updated user",
+    });
+  },
   //
   //
   manageProperties: async (req, res) => {},

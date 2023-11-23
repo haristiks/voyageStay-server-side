@@ -12,6 +12,7 @@ const userSchema = mongoose.Schema({
   accounts: [{ type: mongoose.Schema.ObjectId, ref: "Account" }],
   listings: [{ type: mongoose.Schema.ObjectId, ref: "Listing" }],
   reservations: [{ type: mongoose.Schema.ObjectId, ref: "Reservation" }],
+  adminSuspended: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model("User", userSchema);
