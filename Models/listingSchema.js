@@ -12,6 +12,7 @@ const listingSchema = mongoose.Schema({
   userId: { type: String, ref: "User" },
   price: Number,
   isDeleted:{type:Boolean, default:false},
+  adminApproved:{type:Boolean, default:false}
 });
 
 module.exports = mongoose.model("Listing", listingSchema);

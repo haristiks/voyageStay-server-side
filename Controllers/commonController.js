@@ -15,7 +15,7 @@ module.exports = {
     } = req.query;
 
     if (category && !roomCount) {
-      const listings = await PropertyListing.find({ category: category });
+      const listings = await PropertyListing.find({ category: category, adminApproved:true });
       if (!listings) {
         return res.status(404).json({
           status: "failure",
@@ -36,6 +36,7 @@ module.exports = {
         guestCount,
         bathroomCount,
         locationValue,
+        adminApproved:true,
       });
       if (!listings) {
         return res.status(404).json({
@@ -56,6 +57,7 @@ module.exports = {
         guestCount,
         bathroomCount,
         locationValue,
+        adminApproved:true,
       });
       if (!listings) {
         return res.status(404).json({
@@ -72,7 +74,7 @@ module.exports = {
       });
     }
 
-    const listings = await PropertyListing.find();
+    const listings = await PropertyListing.find({adminApproved:true});
     if (!listings) {
       return res.status(404).json({
         status: "failure",

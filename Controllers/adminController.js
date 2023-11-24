@@ -105,10 +105,44 @@ module.exports = {
   },
   //
   //
-  manageProperties: async (req, res) => {},
+  approveProperties: async (req, res) => {
+    const Id = req.params.id;
+    const { approved } = req.body;
+    const property = await PropertyListing.findOne({ _id: Id });
+    if (!property) {
+      res.status(404).json({
+        status: "error",
+        message: "No Such Listing",
+      });
+    }
+
+    await PropertyListing.findByIdAndUpdate(Id, {
+      $set: { adminApproved: approved },
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Listing Approved",
+    });
+  },
+  //
+  //
+  deleteProperties: async (req, res) => {},
   //
   //
   manageReservations: async (req, res) => {},
+  //
+  //
+  getCommisionDetails: async (req, res) => {},
+  //
+  //
+  updateCommisionData: async (req, res) => {},
+  //
+  //
+  getReviews: async (req, res) => {},
+  //
+  //
+  manageReviews: async (req, res) => {},
   //
   //
 };
