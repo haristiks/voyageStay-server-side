@@ -28,7 +28,9 @@ module.exports = {
   //
   //
   getProperties: async (req, res) => {
-    const listings = await PropertyListing.find().populate("userId");
+    const listings = await PropertyListing.find({
+      adminDeleted: false,
+    }).populate("userId");
     if (!listings) {
       return res.status(404).json({
         status: "failure",
@@ -70,7 +72,7 @@ module.exports = {
   getFavorites: async (req, res) => {
     const favorites = await Favorite.find().populate(["listingId", "userId"]);
     if (!favorites) {
-      res.status(404).json({
+      return res.status(404).json({
         status: "error",
         message: "No favorites found",
       });
@@ -90,7 +92,7 @@ module.exports = {
 
     const user = await User.findOne({ _id: id });
     if (!user) {
-      res.status(404).json({
+      return res.status(404).json({
         status: "error",
         message: "No Such User",
       });
@@ -106,18 +108,19 @@ module.exports = {
   //
   //
   approveProperties: async (req, res) => {
-    const Id = req.params.id;
-    const { approved } = req.body;
+    const Id = req.params.listingId;
+    console.log(req.params);
+    const { adminApproved } = req.body;
     const property = await PropertyListing.findOne({ _id: Id });
     if (!property) {
-      res.status(404).json({
+      return res.status(404).json({
         status: "error",
         message: "No Such Listing",
       });
     }
 
     await PropertyListing.findByIdAndUpdate(Id, {
-      $set: { adminApproved: approved },
+      $set: { adminApproved },
     });
 
     res.status(200).json({
@@ -127,7 +130,25 @@ module.exports = {
   },
   //
   //
-  deleteProperties: async (req, res) => {},
+  deleteProperties: async (req, res) => {
+    const listingId = req.params.id;
+    const listing = await PropertyListing.findOne({ _id: listingId });
+    if (!listing) {
+      return res.status(404).json({
+        status: "error",
+        message: "No Such Listing",
+      });
+    }
+
+    await PropertyListing.findByIdAndUpdate(listingId, {
+      $set: { adminDeleted: true },
+    });
+
+    res.status(200).json({
+      status: "Success",
+      message: "Listing Deleted",
+    });
+  },
   //
   //
   manageReservations: async (req, res) => {},

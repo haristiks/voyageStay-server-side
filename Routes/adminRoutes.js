@@ -11,6 +11,7 @@ router.get("/favorites", verifyToken, TryCatch(controller.getFavorites));
 router.patch("/users/:id", verifyToken, TryCatch(controller.mangeUser));
 router.put("/properties/:id", verifyToken, TryCatch(controller.manageProperties));
 router.put("/reservations/:id", verifyToken, TryCatch(controller.manageReservations));
+router.patch("/properties/:listingId",verifyToken, TryCatch(controller.approveProperties))
 
 
 module.exports = router;

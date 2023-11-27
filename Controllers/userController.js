@@ -108,7 +108,7 @@ module.exports = {
 
     const User = await user.findOne({ _id: id });
     if (!User) {
-      res.status(404).json({
+      return res.status(404).json({
         status: "error",
         message: "user not found",
       });
@@ -138,7 +138,9 @@ module.exports = {
 
     const User = await user.findOne({ _id: id });
     if (!User) {
-      res.status(404).json({ status: "error", message: "User not found" });
+      return res
+        .status(404)
+        .json({ status: "error", message: "User not found" });
     }
     const favorite = await Favorite.create({ userId: id, listingId });
     await user.updateOne({ _id: id }, { $addToSet: { favoriteIds: favorite } });
@@ -183,7 +185,9 @@ module.exports = {
 
     const User = await user.findOne({ _id: id });
     if (!User) {
-      res.status(404).json({ status: "error", message: "User not found" });
+      return res
+        .status(404)
+        .json({ status: "error", message: "User not found" });
     }
 
     const reservationId = await Reservations.create({
@@ -212,7 +216,7 @@ module.exports = {
     const userId = req.params.id;
     const reservation = await Reservations.findOne({ _id: reservId });
     if (!reservation) {
-      res.status(404).json({
+      return res.status(404).json({
         status: "error",
         message: "no reservation found",
       });
@@ -225,7 +229,7 @@ module.exports = {
         { $pull: { reservations: reservId } }
       );
 
-      res.status(200).json({
+      return res.status(200).json({
         status: "success",
         message: "Successfully cancelled reservation.",
       });
@@ -248,7 +252,7 @@ module.exports = {
     const id = req.params.id;
     const favorites = await Favorite.find({ userId: id }).populate("listingId");
     if (!favorites) {
-      res.status(404).json({
+      return res.status(404).json({
         status: "error",
         message: "No favorites found",
       });

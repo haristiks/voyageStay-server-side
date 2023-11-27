@@ -17,4 +17,4 @@ const userSchema = mongoose.Schema({
 
 module.exports = mongoose.model("User", userSchema);
 
-//IMPLIMENT SEPERATE SCHEMA FOR FAVORITES
+

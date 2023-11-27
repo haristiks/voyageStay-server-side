@@ -15,7 +15,11 @@ module.exports = {
     } = req.query;
 
     if (category && !roomCount) {
-      const listings = await PropertyListing.find({ category: category, adminApproved:true });
+      const listings = await PropertyListing.find({
+        category: category,
+        adminApproved: true,
+        adminDeleted: false,
+      });
       if (!listings) {
         return res.status(404).json({
           status: "failure",
@@ -36,7 +40,8 @@ module.exports = {
         guestCount,
         bathroomCount,
         locationValue,
-        adminApproved:true,
+        adminApproved: true,
+        adminDeleted: false,
       });
       if (!listings) {
         return res.status(404).json({
@@ -57,7 +62,8 @@ module.exports = {
         guestCount,
         bathroomCount,
         locationValue,
-        adminApproved:true,
+        adminApproved: true,
+        adminDeleted: false,
       });
       if (!listings) {
         return res.status(404).json({
@@ -74,7 +80,10 @@ module.exports = {
       });
     }
 
-    const listings = await PropertyListing.find({adminApproved:true});
+    const listings = await PropertyListing.find({
+      adminApproved: true,
+      adminDeleted: false,
+    });
     if (!listings) {
       return res.status(404).json({
         status: "failure",
@@ -95,7 +104,11 @@ module.exports = {
   //
   getListingById: async (req, res) => {
     const id = req.params.listingId;
-    const listing = await PropertyListing.findOne({ _id: id });
+    const listing = await PropertyListing.findOne({
+      _id: id,
+      adminDeleted: false,
+      adminApproved: true,
+    });
     if (!listing) {
       return res.status(404).json({
         status: "failure",
