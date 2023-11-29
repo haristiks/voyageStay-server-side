@@ -16,8 +16,8 @@ router.get("/:id/favorites", verifyToken, TryCatch(controller.getFavorites))
 router.post("/:id/reservations",verifyToken, TryCatch(controller.reservation))
 
 router.post('/:id/:reservId/payment',verifyToken, TryCatch(controller.payment))
-router.get('/payment/success', TryCatch(controller.sucess))
-router.get('/payment/cancel', TryCatch(controller.cancel))
+router.patch('/:id/conformreservation', TryCatch(controller.confirmReservation))
+
 
 
 module.exports = router;

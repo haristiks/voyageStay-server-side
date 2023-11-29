@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const PropertyListing = require("../Models/listingSchema");
 const Reservations = require("../Models/reservationSchema");
 const Favorite = require("../Models/favoritesSchema");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 module.exports = {
   //
@@ -180,7 +181,6 @@ module.exports = {
   //
   //
   reservation: async (req, res) => {
-    
     const id = req.params.id;
     const { listingId, startDate, endDate, totalPrice } = req.body;
 
@@ -199,14 +199,58 @@ module.exports = {
       totalPrice,
     });
 
+    const lineItems = [
+      {
+        price_data: {
+          currency: "inr",
+          product_data: {
+            name: listingId,
+          },
+          unit_amount: totalPrice * 100,
+        },
+        quantity: 1,
+      },
+    ];
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      success_url: `http://localhost:3000/paymentsuccess?rid=${reservationId._id}`,
+      cancel_url: "http://localhost:3000/paymentfailed",
+    });
+
+    console.log("session :", session);
+
+    res.json({ id: session.id });
+  },
+  //
+  //
+  //
+  confirmReservation: async (req, res) => {
+    const id = req.params.id;
+    const { reservId } = req.body;
+
+    const reservation = await Reservations.findOne({ _id: reservId });
+
+    if (!reservation) {
+      return res.status(404).json({
+        status: "error",
+        message: "no reservation found",
+      });
+    }
+
+    await Reservations.findByIdAndUpdate(reservId, {
+      $set: { paymentDone: true },
+    });
+
     await user.updateOne(
       { _id: id },
-      { $addToSet: { reservations: reservationId } }
+      { $addToSet: { reservations: reservId } }
     );
 
-    res.status(201).json({
+    res.status(200).json({
       status: "success",
-      message: "Reservation successfull.",
+      message: " Reservation conformed  successfully ",
     });
   },
   //

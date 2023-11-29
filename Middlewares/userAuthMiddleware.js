@@ -16,6 +16,7 @@ module.exports = function TokenVerify(req, res, next) {
     }
 
     req.email = decoded.email;
+    
     next();
   });
 };
