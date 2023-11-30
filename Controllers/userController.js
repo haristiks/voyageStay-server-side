@@ -11,12 +11,13 @@ module.exports = {
   // Create a user with name, email, username (POST /api/users/auth/signup)
   //
   userCreation: async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, image } = req.body;
     const hashedPassword = await bcrypt.hash(password, 12);
     await user.create({
       name,
       email,
       hashedPassword,
+      image,
     });
     res.status(201).json({
       status: "success",

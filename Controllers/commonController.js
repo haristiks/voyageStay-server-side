@@ -189,9 +189,10 @@ module.exports = {
   //
   //
   //
-  getUserById: async (req, res) => {
-    const id = req.params.id;
-    const user = await User.findOne({ _id: id });
+  getUserByEmail: async (req, res) => {
+    const mail = req.params.mail;
+    const user = await User.findOne({ email: mail });
+    
     if (!user) {
       return res.status(404).json({
         status: "failure",

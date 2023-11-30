@@ -8,6 +8,6 @@ router.get("/listings/:listingId", TryCatch(controller.getListingById));
 router.get("/reservations", TryCatch(controller.getReservations));
 router.get("/reservations/:listingId", TryCatch(controller.ReservationByListingId));
 router.get("/users", TryCatch(controller.getUsers));
-router.get('/users/:id', TryCatch(controller.getUserById))
+router.get('/users/:mail', TryCatch(controller.getUserByEmail))
 
 module.exports = router;

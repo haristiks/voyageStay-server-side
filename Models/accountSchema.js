@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const accountSchema = mongoose.Schema({
-  _id: String,
   userId: { type: String, ref: "User" },
   type: String,
   provider: String,
