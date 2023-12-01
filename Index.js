@@ -4,11 +4,14 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const PORT = 8000;
 const userRouter = require("./Routes/userRoutes");
-mongoose.connect("mongodb://127.0.0.1:27017/Voyage-Stay");
+mongoose.connect(process.env.MONGO_URL).then(()=>{
+  console.log("database connected");
+});
 const ErrorHandler = require("./Middlewares/ErrorHandler");
 const commonRouter = require("./Routes/commonRoutes");
 const authRoute = require("./Routes/authRoute");
 const adminRoute = require("./Routes/adminRoutes");
+const { Login } = require("./Controllers/authController");
 
 const app = express();
 app.use(cors());

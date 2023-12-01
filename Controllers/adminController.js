@@ -19,6 +19,7 @@ module.exports = {
       });
     }
 
+
     res.status(200).json({
       status: "success",
       message: "Users fetch Successfull",
