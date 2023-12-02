@@ -11,7 +11,6 @@ const ErrorHandler = require("./Middlewares/ErrorHandler");
 const commonRouter = require("./Routes/commonRoutes");
 const authRoute = require("./Routes/authRoute");
 const adminRoute = require("./Routes/adminRoutes");
-const { Login } = require("./Controllers/authController");
 
 const app = express();
 app.use(cors());
