@@ -24,43 +24,72 @@ module.exports = {
       message: "user registration successfull.",
     });
   },
-  //
-  //User login    (POST api/users/auth/login)
-  //
-  userLongin: async (req, res) => {
-    const { email, password } = req.body;
+  // 
+  // User login    (POST api/users/auth/login)
+  // 
+  // userLongin: async (req, res) => {
+  //   const { email, password } = req.body;
 
-    const User = await user.findOne({ email: email });
+  //   const User = await user.findOne({ email: email });
+  //   if (!User) {
+  //     return res
+  //       .status(404)
+  //       .json({ status: "error", message: "User not found" });
+  //   }
+  //   if (!password || !User.hashedPassword) {
+  //     return res
+  //       .status(400)
+  //       .json({ status: "error", message: "Invalid input" });
+  //   }
+
+  //   const checkPass = await bcrypt.compare(password, User.hashedPassword);
+  //   if (!checkPass) {
+  //     res.status(400).json({ status: "error", message: "password incorrect" });
+  //   }
+  //   const token = jwt.sign(
+  //     { email: User.email },
+  //     process.env.USER_ACCESS_TOKEN_SECRET,
+  //     {
+  //       expiresIn: 100000,
+  //     }
+  //   );
+
+  //   const resp = { ...User._doc };
+
+  //   res.status(200).json({
+  //     status: "success",
+  //     message: "Login successful",
+  //     accessToken: token,
+  //     ...resp,
+  //   });
+  // },
+  //
+  //
+  //
+  userUpdation: async (req, res) => {
+    const { name, image, password } = req.body;
+    const id = req.params.id;
+    const User = await user.findOne({ _id: id });
     if (!User) {
-      return res
-        .status(404)
-        .json({ status: "error", message: "User not found" });
+      return res.status(404).json({
+        status: "error",
+        message: "user not found",
+      });
     }
-    if (!password || !User.hashedPassword) {
-      return res
-        .status(400)
-        .json({ status: "error", message: "Invalid input" });
+    if (name) {
+      await user.findByIdAndUpdate(id, { $set: { name } });
     }
-
-    const checkPass = await bcrypt.compare(password, User.hashedPassword);
-    if (!checkPass) {
-      res.status(400).json({ status: "error", message: "password incorrect" });
+    if (image) {
+      await user.findByIdAndUpdate(id, { $set: { image } });
     }
-    const token = jwt.sign(
-      { email: User.email },
-      process.env.USER_ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: 100000,
-      }
-    );
-
-    const resp = { ...User._doc };
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 12);
+      await user.findByIdAndUpdate(id, { $set: { hashedPassword } });
+    }
 
     res.status(200).json({
       status: "success",
-      message: "Login successful",
-      accessToken: token,
-      ...resp,
+      message: "user update successful",
     });
   },
   //
@@ -216,8 +245,8 @@ module.exports = {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `http://localhost:3000/paymentsuccess?rid=${reservationId._id}`,
-      cancel_url: "http://localhost:3000/paymentfailed",
+      success_url: `${process.env.CLIENT_URL}/paymentsuccess?rid=${reservationId._id}`,
+      cancel_url: `${process.env.CLIENT_URL}/paymentfailed`,
     });
 
     console.log("session :", session);

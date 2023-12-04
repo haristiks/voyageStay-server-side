@@ -2,6 +2,7 @@ const PropertyListing = require("../Models/listingSchema");
 const Reservations = require("../Models/reservationSchema");
 const User = require("../Models/userSchema");
 const Favorite = require("../Models/favoritesSchema");
+const Promo = require("../Models/offerSchema");
 
 module.exports = {
   getAllUsers: async (req, res) => {
@@ -18,7 +19,6 @@ module.exports = {
         message: "No user data found",
       });
     }
-
 
     res.status(200).json({
       status: "success",
@@ -152,19 +152,44 @@ module.exports = {
   },
   //
   //
-  manageReservations: async (req, res) => {},
+  createPromo: async (req, res) => {
+    const { promoCode, imgSrc, discount } = req.body;
+    const promotion = await Promo.create({ promoCode, imgSrc, discount });
+    if (!promotion) {
+      return res.status(400).json({
+        status: "error",
+        message: "Error Creating Promotion",
+      });
+    }
+
+    const promotions = await Promo.find();
+
+    res.status(201).json({
+      status: "Success",
+      message: "New Promotion Created",
+      data: promotions,
+    });
+  },
   //
   //
-  getCommisionDetails: async (req, res) => {},
-  //
-  //
-  updateCommisionData: async (req, res) => {},
-  //
-  //
-  getReviews: async (req, res) => {},
-  //
-  //
-  manageReviews: async (req, res) => {},
+  cancelPromo: async (req, res) => {
+    const promotion = await Promo.findById(req.params.promoId);
+    if (!promotion) {
+      return res.status(404).json({
+        status: "error",
+        message: "No such Promotion",
+      });
+    }
+
+    await Promo.findByIdAndUpdate(req.params.promoId, {
+      $set: { isDeleted: true },
+    });
+
+    res.status(200).json({
+      status: "Success",
+      message: "Promotion Cancelled Successfully",
+    });
+  },
   //
   //
 };

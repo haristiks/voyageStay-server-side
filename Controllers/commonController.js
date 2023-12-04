@@ -1,6 +1,7 @@
 const PropertyListing = require("../Models/listingSchema");
 const Reservations = require("../Models/reservationSchema");
 const User = require("../Models/userSchema");
+const Promo = require("../Models/offerSchema");
 
 module.exports = {
   getAllListings: async (req, res) => {
@@ -192,7 +193,7 @@ module.exports = {
   getUserByEmail: async (req, res) => {
     const mail = req.params.mail;
     const user = await User.findOne({ email: mail });
-    
+
     if (!user) {
       return res.status(404).json({
         status: "failure",
@@ -206,5 +207,25 @@ module.exports = {
       message: "fetch user Successfull",
       data: user,
     });
+  },
+  //
+  //
+  getPromotion: async (req, res) => {
+    const promotion = Promo.findOne({ isDeleted: false });
+    if (!promotion) {
+      return res.status(404).json({
+        status: "failure",
+        status_code: 404,
+        message: "No Promo data found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "fetch Promotion Successfull",
+      data: promotion,
+    });
+
+
   },
 };

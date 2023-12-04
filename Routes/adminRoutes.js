@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const controller = require("../Controllers/adminController");
 const TryCatch = require("../Middlewares/tryCatchMiddleware");
-const verifyToken = require("../Middlewares/userAuthMiddleware");
+const verifyToken = require("../Middlewares/adminAuthMiddleware");
 
 router.get("/users", verifyToken, TryCatch(controller.getAllUsers));
 router.get("/properties", verifyToken, TryCatch(controller.getProperties));
@@ -12,6 +12,8 @@ router.patch("/users/:id", verifyToken, TryCatch(controller.mangeUser));
 router.put("/properties/:id", verifyToken, TryCatch(controller.manageProperties));
 router.put("/reservations/:id", verifyToken, TryCatch(controller.manageReservations));
 router.patch("/properties/:listingId",verifyToken, TryCatch(controller.approveProperties))
+router.post("/promotions",verifyToken,TryCatch(controller.createPromo))
+router.patch("/promotions/:promoId",verifyToken,TryCatch(controller.cancelPromo))
 
 
 module.exports = router;
