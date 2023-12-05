@@ -109,7 +109,6 @@ module.exports = {
   //
   approveProperties: async (req, res) => {
     const Id = req.params.listingId;
-    console.log(req.params);
     const { adminApproved } = req.body;
     const property = await PropertyListing.findOne({ _id: Id });
     if (!property) {
