@@ -6,11 +6,10 @@ const Promo = require("../Models/offerSchema");
 
 module.exports = {
   getAllUsers: async (req, res) => {
-    const users = await User.find({ role: "user" }).populate([
-      "favoriteIds",
-      "listings",
-      "reservations",
-    ]);
+    const users = await User.find(
+      { role: "user" },
+      { hashedPassword: 0 }
+    ).populate(["favoriteIds", "listings", "reservations"]);
 
     if (!users) {
       return res.status(404).json({

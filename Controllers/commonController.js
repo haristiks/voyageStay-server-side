@@ -226,6 +226,5 @@ module.exports = {
       data: promotion,
     });
 
-
   },
 };
