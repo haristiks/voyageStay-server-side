@@ -9,7 +9,7 @@ const listingSchema = mongoose.Schema({
   bathroomCount: Number,
   guestCount: Number,
   locationValue: String,
-  userId: { type: String, ref: "User" },
+  userId: { type: mongoose.Schema.ObjectId, ref: "User" },
   price: Number,
   isDeleted:{type:Boolean, default:false},
   adminApproved:{type:Boolean, default:false},

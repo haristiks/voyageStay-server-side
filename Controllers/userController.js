@@ -24,9 +24,9 @@ module.exports = {
       message: "user registration successfull.",
     });
   },
-  // 
+  //
   // User login    (POST api/users/auth/login)
-  // 
+  //
   // userLongin: async (req, res) => {
   //   const { email, password } = req.body;
 
@@ -68,8 +68,9 @@ module.exports = {
   //
   userUpdation: async (req, res) => {
     const { name, image, password } = req.body;
-    const id = req.params.id;
-    const User = await user.findOne({ _id: id });
+    // const id = req.params.id;
+    const email = req.email;
+    const User = await user.findOne({ email });
     if (!User) {
       return res.status(404).json({
         status: "error",
@@ -77,14 +78,14 @@ module.exports = {
       });
     }
     if (name) {
-      await user.findByIdAndUpdate(id, { $set: { name } });
+      await user.findByIdAndUpdate(User._id, { $set: { name } });
     }
     if (image) {
-      await user.findByIdAndUpdate(id, { $set: { image } });
+      await user.findByIdAndUpdate(User._id, { $set: { image } });
     }
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 12);
-      await user.findByIdAndUpdate(id, { $set: { hashedPassword } });
+      await user.findByIdAndUpdate(User._id, { $set: { hashedPassword } });
     }
 
     res.status(200).json({

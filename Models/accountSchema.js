@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const accountSchema = mongoose.Schema({
-  userId: { type: String, ref: "User" },
+  userId: { type: mongoose.Schema.ObjectId, ref: "User" },
   type: String,
   provider: String,
   providerAccountId: String,
