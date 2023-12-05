@@ -10,7 +10,6 @@ router.get("/reservations",verifyToken, TryCatch(controller.getReseservations));
 router.get("/favorites", verifyToken, TryCatch(controller.getFavorites));
 router.patch("/users/:id", verifyToken, TryCatch(controller.mangeUser));
 router.put("/properties/:id", verifyToken, TryCatch(controller.manageProperties));
-router.put("/reservations/:id", verifyToken, TryCatch(controller.manageReservations));
 router.patch("/properties/:listingId",verifyToken, TryCatch(controller.approveProperties))
 router.post("/promotions",verifyToken,TryCatch(controller.createPromo))
 router.patch("/promotions/:promoId",verifyToken,TryCatch(controller.cancelPromo))

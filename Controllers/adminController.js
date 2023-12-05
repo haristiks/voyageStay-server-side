@@ -129,7 +129,7 @@ module.exports = {
   },
   //
   //
-  deleteProperties: async (req, res) => {
+  manageProperties: async (req, res) => {
     const listingId = req.params.id;
     const listing = await PropertyListing.findOne({ _id: listingId });
     if (!listing) {
