@@ -3,10 +3,23 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const PORT = 8000;
+const user = require("./Models/userSchema");
+
 const userRouter = require("./Routes/userRoutes");
-mongoose.connect(process.env.MONGO_URL).then(()=>{
+
+mongoose.connect(process.env.MONGO_URL).then(async () => {
   console.log("database connected");
+  const admin = await user.findOne({ role: "admin" });
+  if (!admin) {
+    await user.create({
+      name: process.env.ADMIN_NAME,
+      email: process.env.ADMIN_EMAIL,
+      password: process.env.ADMIN_PASSWORD,
+      role: "admin",
+    });
+  }
 });
+
 const ErrorHandler = require("./Middlewares/ErrorHandler");
 const commonRouter = require("./Routes/commonRoutes");
 const authRoute = require("./Routes/authRoute");
