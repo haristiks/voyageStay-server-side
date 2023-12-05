@@ -4,6 +4,12 @@ const jwt = require("jsonwebtoken");
 const PropertyListing = require("../Models/listingSchema");
 const Reservations = require("../Models/reservationSchema");
 const Favorite = require("../Models/favoritesSchema");
+const Promo = require("../Models/offerSchema");
+const {
+  joiUserCreationSchema,
+  joiListingCreationSchema,
+  joiUserUpdationSchema,
+} = require("../Models/validationSchema");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 module.exports = {
@@ -11,13 +17,16 @@ module.exports = {
   // Create a user with name, email, username (POST /api/users/auth/signup)
   //
   userCreation: async (req, res) => {
-    const { name, email, password, image } = req.body;
+    const { value, error } = joiUserCreationSchema.validate(req.body);
+    if (error) {
+      return res.json(error.message);
+    }
+    const { name, email, password } = value;
     const hashedPassword = await bcrypt.hash(password, 12);
     await user.create({
       name,
       email,
       hashedPassword,
-      image,
     });
     res.status(201).json({
       status: "success",
@@ -67,7 +76,11 @@ module.exports = {
   //
   //
   userUpdation: async (req, res) => {
-    const { name, image, password } = req.body;
+    const { value, error } = joiUserUpdationSchema.validate(req.body);
+    if (error) {
+      return res.json(error.message);
+    }
+    const { name, image, password } = value;
     // const id = req.params.id;
     const email = req.email;
     const User = await user.findOne({ email });
@@ -97,7 +110,11 @@ module.exports = {
   //
   //
   createListings: async (req, res) => {
-    const id = req.params.id;
+    // const id = req.params.id;
+    const { value, error } = joiListingCreationSchema.validate(req.body);
+    if (error) {
+      return res.json(error.message);
+    }
     const {
       title,
       description,
@@ -108,7 +125,9 @@ module.exports = {
       guestCount,
       location,
       price,
-    } = req.body;
+    } = value;
+
+    const User = await user.findOne({ email: req.email });
 
     const property = await PropertyListing.create({
       title,
@@ -119,16 +138,18 @@ module.exports = {
       bathroomCount,
       guestCount,
       locationValue: location.value,
-      userId: id,
+      userId: User._id,
       price: parseInt(price, 10),
     });
 
-    await user.updateOne({ _id: id }, { $push: { listings: property._id } });
+    await user.updateOne(
+      { email: req.email },
+      { $push: { listings: property._id } }
+    );
 
     res.status(201).json({
       status: "success",
       message: "Listing created Successfully.",
-      listing: property,
     });
   },
   //
@@ -136,9 +157,9 @@ module.exports = {
   //
   deleteListing: async (req, res) => {
     const listId = req.params.listingId;
-    const id = req.params.id;
+    // const id = req.params.id;
 
-    const User = await user.findOne({ _id: id });
+    const User = await user.findOne({ email: req.email });
     if (!User) {
       return res.status(404).json({
         status: "error",
@@ -148,14 +169,17 @@ module.exports = {
 
     if (User.listings.includes(listId)) {
       await PropertyListing.findByIdAndDelete({ _id: listId });
-      await user.updateOne({ _id: id }, { $pull: { listings: listId } });
+      await user.updateOne(
+        { email: req.email },
+        { $pull: { listings: listId } }
+      );
 
-      res.status(200).json({
+      return res.status(200).json({
         status: "success",
         message: "property deleted successfully",
       });
     } else {
-      res.status(404).json({
+      return res.status(404).json({
         status: "error",
         message: "Property not found",
       });
@@ -165,17 +189,20 @@ module.exports = {
   //
   //
   addToFavorites: async (req, res) => {
-    const id = req.params.id;
+    // const id = req.params.id;
     const { listingId } = req.body;
 
-    const User = await user.findOne({ _id: id });
+    const User = await user.findOne({ email: req.email });
     if (!User) {
       return res
         .status(404)
         .json({ status: "error", message: "User not found" });
     }
-    const favorite = await Favorite.create({ userId: id, listingId });
-    await user.updateOne({ _id: id }, { $addToSet: { favoriteIds: favorite } });
+    const favorite = await Favorite.create({ userId: User._id, listingId });
+    await user.updateOne(
+      { email: req.email },
+      { $addToSet: { favoriteIds: favorite } }
+    );
 
     res.status(201).json({
       status: "success",
@@ -189,19 +216,19 @@ module.exports = {
     const id = req.params.id;
     const { listingId } = req.body;
 
-    const User = await user.findOne({ _id: id });
+    const User = await user.findOne({ email: req.email });
     if (!User) {
       res.status(404).json({ status: "error", message: "User not found" });
       return; // Exit the function if the user is not found
     }
 
-    const favorite = await Favorite.findOne({ userId: id, listingId });
+    const favorite = await Favorite.findOne({ userId: User._id, listingId });
     if (!favorite) {
       res.status(404).json({ status: "error", message: "Favorite not found" });
       return; // Exit the function if the favorite is not found
     }
     await user.updateOne({ _id: id }, { $pull: { favoriteIds: favorite._id } });
-    await Favorite.deleteOne({ userId: id, listingId: listingId });
+    await Favorite.deleteOne({ userId: User._id, listingId: listingId });
 
     res.status(201).json({
       status: "success",
@@ -212,22 +239,25 @@ module.exports = {
   //
   //
   reservation: async (req, res) => {
-    const id = req.params.id;
-    const { listingId, startDate, endDate, totalPrice } = req.body;
+    // const id = req.params.id;
+    const { listingId, startDate, endDate, totalPrice, promoCode } = req.body;
 
-    const User = await user.findOne({ _id: id });
+    const User = await user.findOne({ email: req.email });
     if (!User) {
       return res
         .status(404)
         .json({ status: "error", message: "User not found" });
     }
 
+    const promotion = await Promo.findOne({ promoCode, isDeleted: false });
     const reservationId = await Reservations.create({
-      userId: id,
+      userId: User._id,
       listingId,
       startDate,
       endDate,
       totalPrice,
+      romocodeAdded: promotion ? true : false,
+      promocode: promotion && promotion._id,
     });
 
     const lineItems = [
@@ -242,6 +272,7 @@ module.exports = {
         quantity: 1,
       },
     ];
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
@@ -289,7 +320,13 @@ module.exports = {
   //
   cancelReservation: async (req, res) => {
     const reservId = req.params.reservId;
-    const userId = req.params.id;
+    const User = await user.findOne({ email: req.email });
+    if (!User) {
+      return res.status(404).json({
+        status: "error",
+        message: "no users foun",
+      });
+    }
     const reservation = await Reservations.findOne({ _id: reservId });
     if (!reservation) {
       return res.status(404).json({
@@ -298,10 +335,10 @@ module.exports = {
       });
     }
 
-    if (reservation.userId == userId) {
+    if (reservation.userId == User._id) {
       await Reservations.findByIdAndDelete({ _id: reservId });
       await user.updateOne(
-        { _id: userId },
+        { _id: User._id },
         { $pull: { reservations: reservId } }
       );
 
@@ -326,7 +363,16 @@ module.exports = {
   //
   getFavorites: async (req, res) => {
     const id = req.params.id;
-    const favorites = await Favorite.find({ userId: id }).populate("listingId");
+    const User = await user.findOne({ email: req.email });
+    if (!User) {
+      return res.status(404).json({
+        status: "error",
+        message: "No user found",
+      });
+    }
+    const favorites = await Favorite.find({ userId: User._id }).populate(
+      "listingId"
+    );
     if (!favorites) {
       return res.status(404).json({
         status: "error",
@@ -340,4 +386,7 @@ module.exports = {
       data: favorites,
     });
   },
+  //
+  //
+  //
 };

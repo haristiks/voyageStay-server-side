@@ -1,12 +1,15 @@
 const user = require("../Models/userSchema");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const { joiUserLoginSchema } = require("../Models/validationSchema");
 
 module.exports = {
-
   Login: async (req, res) => {
-    const { email, password } = req.body;
+    const { value, error } = joiUserLoginSchema.validate(req.body);
+    if (error) {
+      return res.json(error.message);
+    }
+    const { email, password } = value;
 
     const User = await user.findOne({ email: email });
     if (!User) {
@@ -26,10 +29,11 @@ module.exports = {
         .json({ status: "error", message: "Suspended Accound" });
     }
 
-
     const checkPass = await bcrypt.compare(password, User.hashedPassword);
     if (!checkPass) {
-      res.status(400).json({ status: "error", message: "password incorrect" });
+      return res
+        .status(400)
+        .json({ status: "error", message: "password incorrect" });
     }
 
     let accessToken;
@@ -50,7 +54,6 @@ module.exports = {
         }
       );
     }
-
 
     // const accessToken = jwt.sign(
     //   { email: User.email },
