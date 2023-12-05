@@ -218,16 +218,23 @@ module.exports = {
 
     const User = await user.findOne({ email: req.email });
     if (!User) {
-      res.status(404).json({ status: "error", message: "User not found" });
-      return; // Exit the function if the user is not found
+      return res
+        .status(404)
+        .json({ status: "error", message: "User not found" });
+      // Exit the function if the user is not found
     }
 
     const favorite = await Favorite.findOne({ userId: User._id, listingId });
     if (!favorite) {
-      res.status(404).json({ status: "error", message: "Favorite not found" });
-      return; // Exit the function if the favorite is not found
+      return res
+        .status(404)
+        .json({ status: "error", message: "Favorite not found" });
+      // Exit the function if the favorite is not found
     }
-    await user.updateOne({ _id: id }, { $pull: { favoriteIds: favorite._id } });
+    await user.updateOne(
+      { _id: User._id },
+      { $pull: { favoriteIds: favorite._id } }
+    );
     await Favorite.deleteOne({ userId: User._id, listingId: listingId });
 
     res.status(201).json({
