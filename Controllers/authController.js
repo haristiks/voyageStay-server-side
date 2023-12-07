@@ -87,7 +87,9 @@ module.exports = {
 
     const checkPass = await bcrypt.compare(password, User.hashedPassword);
     if (!checkPass) {
-      return res.status(400).json({ status: "error", message: "password incorrect" });
+      return res
+        .status(400)
+        .json({ status: "error", message: "password incorrect" });
     }
     const token = jwt.sign(
       { email: User.email },
@@ -99,14 +101,13 @@ module.exports = {
       }
     );
 
-    console.log(User);
-    const resp = { ...User };
+    const { hashedPassword, ...resp } = User._doc;
 
     res.status(200).json({
       status: "success",
       message: "Login successful",
       accessToken: token,
-      ...User._doc,
+      ...resp,
     });
   },
 };
