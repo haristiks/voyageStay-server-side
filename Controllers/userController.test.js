@@ -15,6 +15,8 @@ describe("User Controller Tests", () => {
         password: "testpassword",
       });
 
+      //
+
       expect(response.statusCode).toBe(201);
       expect(response.body).toHaveProperty("status", "success");
       // Add more assertions based on your expected response
