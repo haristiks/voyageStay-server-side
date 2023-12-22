@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const listingSchema = mongoose.Schema({
   title: String,
   description: String,
-  imageSrc: String,
+  imageSrc: [String],
   createdAt: { type: Date, default: Date.now },
   category: String,
   roomCount: Number,

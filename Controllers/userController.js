@@ -34,46 +34,6 @@ module.exports = {
     });
   },
   //
-  // User login    (POST api/users/auth/login)
-  //
-  // userLongin: async (req, res) => {
-  //   const { email, password } = req.body;
-
-  //   const User = await user.findOne({ email: email });
-  //   if (!User) {
-  //     return res
-  //       .status(404)
-  //       .json({ status: "error", message: "User not found" });
-  //   }
-  //   if (!password || !User.hashedPassword) {
-  //     return res
-  //       .status(400)
-  //       .json({ status: "error", message: "Invalid input" });
-  //   }
-
-  //   const checkPass = await bcrypt.compare(password, User.hashedPassword);
-  //   if (!checkPass) {
-  //     res.status(400).json({ status: "error", message: "password incorrect" });
-  //   }
-  //   const token = jwt.sign(
-  //     { email: User.email },
-  //     process.env.USER_ACCESS_TOKEN_SECRET,
-  //     {
-  //       expiresIn: 100000,
-  //     }
-  //   );
-
-  //   const resp = { ...User._doc };
-
-  //   res.status(200).json({
-  //     status: "success",
-  //     message: "Login successful",
-  //     accessToken: token,
-  //     ...resp,
-  //   });
-  // },
-  //
-  //
   //
   userUpdation: async (req, res) => {
     const { value, error } = joiUserUpdationSchema.validate(req.body);
