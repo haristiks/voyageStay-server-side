@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 
 module.exports = {
   Login: async (req, res) => {
-
     const { email, password } = req.body;
 
     const User = await user.findOne({ email: email });
@@ -38,11 +37,13 @@ module.exports = {
 
     const { hashedPassword, ...resp } = User._doc;
 
-    res.status(200).json({
-      status: "success",
-      message: "Login successful",
-      accessToken: token,
-      ...resp,
-    });
+    res
+      .status(200)
+      .cookie("accessToken", token)
+      .json({
+        status: "success",
+        message: "Login successful",
+        ...resp,
+      });
   },
 };

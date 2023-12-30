@@ -20,7 +20,7 @@ const joiUserUpdationSchema = Joi.object({
 const joiListingCreationSchema = Joi.object({
   title: Joi.string().required(),
   description: Joi.string().required(),
-  imageSrc: Joi.string().required(),
+  imageSrc: Joi.array().required(),
   category: Joi.string().required(),
   roomCount: Joi.number().required(),
   bathroomCount: Joi.number().required(),
