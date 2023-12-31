@@ -5,11 +5,6 @@ const PropertyListing = require("../Models/listingSchema");
 const Reservations = require("../Models/reservationSchema");
 const Favorite = require("../Models/favoritesSchema");
 const Promo = require("../Models/offerSchema");
-const {
-  joiUserCreationSchema,
-  joiListingCreationSchema,
-  joiUserUpdationSchema,
-} = require("../Models/validationSchema");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 module.exports = {
@@ -17,11 +12,7 @@ module.exports = {
   // Create a user with name, email, username (POST /api/users/auth/signup)
   //
   userCreation: async (req, res) => {
-    const { value, error } = joiUserCreationSchema.validate(req.body);
-    if (error) {
-      return res.json(error.message);
-    }
-    const { name, email, password } = value;
+    const { name, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 12);
     await user.create({
       name,
@@ -36,11 +27,7 @@ module.exports = {
   //
   //
   userUpdation: async (req, res) => {
-    const { value, error } = joiUserUpdationSchema.validate(req.body);
-    if (error) {
-      return res.json(error.message);
-    }
-    const { name, image, password } = value;
+    const { name, image, password } = req.body;
     // const id = req.params.id;
     const email = req.email;
     const User = await user.findOne({ email });
@@ -71,10 +58,7 @@ module.exports = {
   //
   createListings: async (req, res) => {
     // const id = req.params.id;
-    const { value, error } = joiListingCreationSchema.validate(req.body);
-    if (error) {
-      return res.json(error.message);
-    }
+
     const {
       title,
       description,
@@ -85,7 +69,9 @@ module.exports = {
       guestCount,
       location,
       price,
-    } = value;
+    } = req.body;
+
+    console.log(imageSrc);
 
     const User = await user.findOne({ email: req.email });
 
