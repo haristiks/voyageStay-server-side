@@ -37,10 +37,13 @@ module.exports = {
 
     const { hashedPassword, ...resp } = User._doc;
 
-    res.status(200).json({
+    res.status(200).cookie("accessToken",token,{
+			sameSite: 'strict',
+			path: '/',
+      httpOnly: true,
+		}).json({
       status: "success",
-      message: "Login successful",
-      accessToken: token,
+      message: "Login successful cookie initialized",
       ...resp,
     });
   },
