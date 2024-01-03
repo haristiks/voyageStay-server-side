@@ -16,7 +16,7 @@
 //     }
 
 //     req.email = decoded.email;
-    
+
 //     next();
 //   });
 // };
@@ -26,9 +26,7 @@ const jwt = require("jsonwebtoken");
 module.exports = function TokenVerify(req, res, next) {
   // console.log(req);
 
-
-  const token = req.cookies.access_token;
-
+  const token = req.cookies.accessToken;
   if (!token) {
     return res.status(403).json({ error: "No token provided" });
   }
@@ -37,9 +35,7 @@ module.exports = function TokenVerify(req, res, next) {
     if (err) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-
     req.email = decoded.email;
-    
     next();
   });
 };
