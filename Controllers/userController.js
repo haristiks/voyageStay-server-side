@@ -71,7 +71,6 @@ module.exports = {
       price,
     } = req.body;
 
-    console.log(imageSrc);
 
     const User = await user.findOne({ email: req.email });
 
@@ -234,7 +233,6 @@ module.exports = {
       cancel_url: `${process.env.CLIENT_URL}/paymentfailed`,
     });
 
-    console.log("session :", session);
 
     res.json({ id: session.id });
   },

@@ -13,6 +13,11 @@ module.exports = {
         .status(404)
         .json({ status: "error", message: "User not found" });
     }
+    if (User.adminSuspended) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Suspended Account" });
+    }
     if (!password || !User.hashedPassword) {
       return res
         .status(400)

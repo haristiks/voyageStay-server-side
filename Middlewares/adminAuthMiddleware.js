@@ -1,19 +1,11 @@
 const jwt = require("jsonwebtoken");
-
-// Middleware to verify JWT token
 module.exports = function verifyToken(req, res, next) {
-  // Check if the ADMIN_ACCESS_TOKEN_SECRET environment variable is set
   if (!process.env.ADMIN_ACCESS_TOKEN_SECRET) {
-    return res
-      .status(500)
-      .json({
-        error: "ADMIN_ACCESS_TOKEN_SECRET environment variable not found",
-      });
+    return res.status(500).json({
+      error: "ADMIN_ACCESS_TOKEN_SECRET environment variable not found",
+    });
   }
-
-  // Extract the token from the Authorization header
-  const auth = req.headers["authorization"];
-  const token = auth && auth.split(" ")[1];
+  const token = req.cookies.accessToken;
 
   // Check if the token exists
   if (!token) {
@@ -34,4 +26,3 @@ module.exports = function verifyToken(req, res, next) {
     next();
   });
 };
-
