@@ -117,6 +117,7 @@ module.exports = {
           status: "success",
           message: "Login successful cookie initialized",
           ...resp,
+          password: generatedPassword,
         });
     }
   },
