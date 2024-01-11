@@ -167,11 +167,10 @@ module.exports = {
   //
   //
   getUsers: async (req, res) => {
-    const users = await User.find({ role: "user" }).populate([
-      "favoriteIds",
-      "listings",
-      "reservations",
-    ]);
+    const users = await User.find({
+      role: "user",
+      adminSuspended: false,
+    },{hashedPassword:0});
 
     if (!users) {
       return res.status(404).json({
@@ -190,26 +189,6 @@ module.exports = {
   //
   //
   //
-  getUserByEmail: async (req, res) => {
-    const mail = req.params.mail;
-    const user = await User.findOne({ email: mail });
-
-    if (!user) {
-      return res.status(404).json({
-        status: "failure",
-        status_code: 404,
-        message: "No user data found",
-      });
-    }
-
-    res.status(200).json({
-      status: "success",
-      message: "fetch user Successfull",
-      data: user,
-    });
-  },
-  //
-  //
   getPromotion: async (req, res) => {
     const promotion = Promo.findOne({ isDeleted: false });
     if (!promotion) {
@@ -225,6 +204,5 @@ module.exports = {
       message: "fetch Promotion Successfull",
       data: promotion,
     });
-
   },
 };

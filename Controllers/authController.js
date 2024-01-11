@@ -1,7 +1,6 @@
 const user = require("../Models/userSchema");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-// const { joiUserLoginSchema } = require("../Models/validationSchema");
 
 module.exports = {
   Login: async (req, res) => {
@@ -42,14 +41,23 @@ module.exports = {
 
     const { hashedPassword, ...resp } = User._doc;
 
-    res.status(200).cookie("accessToken",token,{
-			sameSite: 'strict',
-			path: '/',
-      httpOnly: true,
-		}).json({
+    res
+      .status(200)
+      .cookie("accessToken", token, {
+        sameSite: "strict",
+        path: "/",
+        httpOnly: true,
+      })
+      .json({
+        status: "success",
+        message: "Login successful cookie initialized",
+        ...resp,
+      });
+  },
+  Logout: async (req, res) => {
+    res.status(200).clearCookie("accssToken").json({
       status: "success",
-      message: "Login successful cookie initialized",
-      ...resp,
+      message: "Logout Successful cookie cleared",
     });
   },
 };

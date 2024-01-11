@@ -7,7 +7,7 @@ const Promo = require("../Models/offerSchema");
 module.exports = {
   getAllUsers: async (req, res) => {
     const users = await User.find(
-      { role: "user" },
+      { role: "user", adminSuspended: false },
       { hashedPassword: 0 }
     ).populate(["favoriteIds", "listings", "reservations"]);
 
@@ -86,11 +86,14 @@ module.exports = {
   },
   //
   //
-  mangeUser: async (req, res) => {
+  banUser: async (req, res) => {
     const id = req.params.id;
-    const { adminSuspended } = req.body;
 
-    const user = await User.findOne({ _id: id });
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $set: { adminSuspended: true } },
+      { new: true }
+    );
     if (!user) {
       return res.status(404).json({
         status: "error",
@@ -98,7 +101,27 @@ module.exports = {
       });
     }
 
-    await User.findByIdAndUpdate(id, { $set: { adminSuspended } });
+    res.status(201).json({
+      status: "success",
+      message: " successfully updated user",
+    });
+  },
+  //
+  //
+  unbanUser: async (req, res) => {
+    const id = req.params.id;
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $set: { adminSuspended: false } },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "No Such User",
+      });
+    }
 
     res.status(201).json({
       status: "success",
@@ -129,7 +152,7 @@ module.exports = {
   },
   //
   //
-  manageProperties: async (req, res) => {
+  deleteProperties: async (req, res) => {
     const listingId = req.params.id;
     const listing = await PropertyListing.findOne({ _id: listingId });
     if (!listing) {
@@ -190,4 +213,24 @@ module.exports = {
   },
   //
   //
+  getBannedUsers: async (req, res) => {
+    const users = await User.find(
+      { role: "user", adminSuspended: true },
+      { hashedPassword: 0 }
+    );
+
+    if (!users) {
+      return res.status(404).json({
+        status: "failure",
+        status_code: 404,
+        message: "No user data found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Users fetch Successfull",
+      data: users,
+    });
+  },
 };

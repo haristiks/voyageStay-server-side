@@ -26,6 +26,22 @@ module.exports = {
   },
   //
   //
+  getUserDetails: async (req, res) => {
+    const User = await user.findOne({ email: req.email });
+    if (!User) {
+      return res.status(404).json({
+        status: "error",
+        message: "No user found",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      message: "user detals fetch successfull.",
+      User,
+    });
+  },
+  //
+  //
   userUpdation: async (req, res) => {
     const { name, image, password } = req.body;
     // const id = req.params.id;
@@ -71,7 +87,6 @@ module.exports = {
       price,
     } = req.body;
 
-
     const User = await user.findOne({ email: req.email });
 
     const property = await PropertyListing.create({
@@ -95,6 +110,34 @@ module.exports = {
     res.status(201).json({
       status: "success",
       message: "Listing created Successfully.",
+    });
+  },
+  //
+  //
+  //
+  updateListings: async (req, res) => {
+    const id = req.params.listingId;
+
+    const User = await user.findOne({ email: req.email });
+
+    const updatedproperty = await PropertyListing.findByIdAndUpdate(id, {
+      $set: {
+        ...req.body,
+        locationValue: location.value,
+        userId: User._id,
+        price: parseInt(price, 10),
+      },
+    });
+    if (!updatedproperty) {
+      return res.status(404).json({
+        status: "error",
+        message: "Property not found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Listing updated Successfully.",
     });
   },
   //
@@ -233,7 +276,6 @@ module.exports = {
       cancel_url: `${process.env.CLIENT_URL}/paymentfailed`,
     });
 
-
     res.json({ id: session.id });
   },
   //
@@ -313,7 +355,6 @@ module.exports = {
   //
   //
   getFavorites: async (req, res) => {
-    const id = req.params.id;
     const User = await user.findOne({ email: req.email });
     if (!User) {
       return res.status(404).json({
@@ -335,6 +376,36 @@ module.exports = {
       status: "success",
       message: " successfully fetched favorites",
       data: favorites,
+    });
+  },
+
+  //
+  //
+  //
+  getBookingsOnUserListings: async (req, res) => {
+    const User = await user.findOne({ email: req.email });
+    if (!User) {
+      return res.status(404).json({
+        status: "error",
+        message: "No user found",
+      });
+    }
+    const totalReservations = await Reservations.find().populate("listingId");
+
+    const bookings = totalReservations.filter(
+      (item) => item.listingId.userId == User._id
+    );
+    if (bookings.length < 1) {
+      return res.status(404).json({
+        status: "error",
+        message: "No bookings found",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: " successfully fetched bookings on your listings",
+      data: bookings,
     });
   },
   //
