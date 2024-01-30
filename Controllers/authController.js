@@ -71,11 +71,11 @@ module.exports = {
     const user = await User.findOne({ email: req.body.email });
     if (user) {
       const gtoken = jwt.sign(
-        { email: User.email },
+        { email: user.email },
         process.env.USER_ACCESS_TOKEN_SECRET,
         { expiresIn: 86400 }
       );
-      const { hashedPassword, ...resp } = User._doc;
+      const { hashedPassword, ...resp } = user._doc;
       res
         .status(200)
         .cookie("accessToken", gtoken, {
@@ -101,7 +101,7 @@ module.exports = {
       });
 
       const gtoken = jwt.sign(
-        { email: User.email },
+        { email: user.email },
         process.env.USER_ACCESS_TOKEN_SECRET,
         { expiresIn: 86400 }
       );

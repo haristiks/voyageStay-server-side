@@ -4,4 +4,6 @@ const favoriteSchema = mongoose.Schema({
   listingId: { type: mongoose.Schema.ObjectId, ref: "Listing" },
 });
 
+favoriteSchema.index({ userId: 1, listingId: 1 }, { unique: true });
+
 module.exports = mongoose.model("Favorite", favoriteSchema);
