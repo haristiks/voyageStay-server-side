@@ -27,6 +27,7 @@ module.exports = {
   },
   //
   //
+//
   getProperties: async (req, res) => {
     const listings = await PropertyListing.find({
       adminDeleted: false,
@@ -47,6 +48,7 @@ module.exports = {
   },
   //
   //
+//
   getReseservations: async (req, res) => {
     const ReservationList = await Reservations.find().populate([
       "listingId",
